@@ -1,0 +1,80 @@
+---
+output:
+  html_document: default
+  word_document: default
+---
+LIMPIEZA DE LA BASE DE DATOS: CAMAS POR 1000 HABITANTES
+
+1. Trayendo la base
+
+```{r}
+library(htmltab)
+
+linkCIA_cama = "https://www.cia.gov/library/publications/resources/the-world-factbook/fields/360.html"
+linkPath_cama='//*[@id="fieldListing"]'
+
+camas = htmltab(doc = linkCIA_cama,
+                which = linkPath_cama)
+
+```
+
+2.Separando columnas
+
+```{r}
+library(tidyr)
+
+camas=separate(camas,`Hospital bed density`,into = c("oficial","delete")," ")
+```
+
+3.Eliminando columnas innecesarias
+
+```{r}
+camas$delete=NULL
+```
+
+4.Cambiando nombres
+
+```{r}
+names(camas)=c("Pais","numero de camas por 1000 hab")
+```
+
+5.Ver la tabla
+
+```{r}
+str(camas)
+```
+
+6. Cambiar chr a numerico
+
+```{r}
+camas$`numero de camas por 1000 hab`=as.numeric(camas$`numero de camas por 1000 hab`)
+```
+
+7.Volvemos a ver la tabla
+
+```{r}
+str(camas)
+```
+
+8. Viendo los NA'S
+```{r}
+table(camas$`numero de camas por 1000 hab`,useNA = "always")
+```
+
+9.Traemos la base de Excel para que con el Merge quitemos los países innecesarios
+
+```{r}
+library(rio)
+lkXLSX = "https://github.com/IvonneMM/COVID19grupo2oficial/raw/master/America%20y%20Europa3%20(3)%20(1)%20(1).xls"
+Paisesoficial=import(lkXLSX)
+```
+
+10. Hacemos el Merge
+
+```{r}
+Numerodecamas=merge(camas,Paisesoficial,by.x='Pais',by.y='Pais')
+```
+
+
+
+
