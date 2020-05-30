@@ -1,0 +1,62 @@
+LIMPIEZA DE LA BASE DE DATOS DE ESTADO DE DERECHO: Rango de Percentil (Rule of Law: Percentil Rank)
+
+1.Trayendo la base de datos de GitHub
+
+```{r}
+install.packages("rio")
+```
+
+
+```{r}
+library(rio)
+lkXLSX= "https://github.com/Mayrav579/Covid19---Trabajo/raw/master/Data_From_Worldwide_Governance_Indicators_Rule%20of%20Law%20Percentile%20Rank.xlsx"
+RuleofLaw= import(lkXLSX)
+```
+
+2. Eliminando columnas innecesarias
+
+```{r}
+RuleofLaw[,c(2,3,4)] = NULL
+```
+
+3.Visualizamos la tabla
+
+```{r}
+str(RuleofLaw)
+```
+
+4. Convertimos el chr a numérico
+
+```{r}
+RuleofLaw$`2018 [YR2018]`=as.numeric(RuleofLaw$`2018 [YR2018]`)
+```
+
+5.visualizamos la tabla 
+```{r}
+str(RuleofLaw)
+```
+
+6.Viendo los NA's
+
+```{r}
+table(RuleofLaw$`2018 [YR2018]`,useNA = "always")
+```
+
+7.Cambiando nombres de las columnas
+
+```{r}
+names(RuleofLaw)=c("Pais","RuleofLaw")
+```
+
+8.  Traemos la base de Excel para que con el Merge quitemos los países innecesarios
+
+```{r}
+lkXLSX = "https://github.com/Mayrav579/Covid19---Trabajo/raw/master/Pa%C3%ADses%20Am%C3%A9rica%20y%20Europa.xlsx"
+Paisesoficial=import(lkXLSX)
+```
+
+9. Hacemos el Merge
+
+```{r}
+ImperiodelaLey=merge(RuleofLaw,Paisesoficial,by.x='Pais', by.y='Pais')
+```
