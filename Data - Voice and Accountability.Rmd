@@ -1,0 +1,64 @@
+LIMPIEZA DE BASE DE DATOS DE LA BASE DE DATOS VOZ Y RENDICIÓN DE CUENTAS: RANGO DE PORCENTAJE (Voice and Accountability: PErcentile Rank)
+
+1.Trayendo la base de datos desde GitHub
+
+```{r}
+install.packages("rio")
+```
+
+```{r}
+library(rio)
+lXLSX="https://github.com/Mayrav579/Covid19---Trabajo/raw/master/Data_From_Worldwide_Governance_Indicators_Voice%20and%20Accountability%20Percentile%20Rank.xlsx"
+VoiceandAcc=import(lXLSX)
+```
+
+2.Eliminando columnnas innnecesarias
+
+```{r}
+VoiceandAcc[,c(2,3,4)]=NULL
+```
+
+3. Revisamos la tabla
+
+```{r}
+str(VoiceandAcc)
+```
+
+4.Convertimos chr a numérico
+
+```{r}
+VoiceandAcc$`2018 [YR2018]`=as.numeric(VoiceandAcc$`2018 [YR2018]`)
+```
+
+5. vemos la tabla
+
+```{r}
+str(VoiceandAcc)
+```
+
+6.Visualizamos los NA's
+```{r}
+table(VoiceandAcc$`2018 [YR2018]`,useNA = "always")
+```
+
+
+7.Cambiamos los nombres de las columnas
+
+```{r}
+names(VoiceandAcc)=c("Pais","VoiceandAccountability")
+```
+
+8.Traemos la base de Excel para que con el Merge quitemos los países innecesarios
+
+```{r}
+library(rio)
+lkXLSX = "https://github.com/Mayrav579/Covid19---Trabajo/raw/master/Pa%C3%ADses%20Am%C3%A9rica%20y%20Europa.xlsx"
+Paisesoficial=import(lkXLSX)
+```
+
+9.Hacemos el Merge
+
+
+```{r}
+VoiceandAccountability = merge(VoiceandAcc,Paisesoficial,by.x='Pais',by.y='Pais')
+```
