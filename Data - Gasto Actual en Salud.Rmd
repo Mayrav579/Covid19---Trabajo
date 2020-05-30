@@ -1,0 +1,80 @@
+LIMPIEZA DE LA BASE DE DATOS DE GASTO ACTUAL EN SALUD (Current Health Expenditure - CHE)
+
+1. Trayendo la base de datos:
+
+```{r}
+install.packages("htmltab")
+install.packages("tidyr")
+install.packages("rio")
+```
+
+```{r}
+library(htmltab)
+linkCIA_che = "https://www.cia.gov/library/publications/resources/the-world-factbook/fields/409.html"
+linkPath_che='//*[@id="fieldListing"]'
+che= htmltab(doc = linkCIA_che,
+             which = linkPath_che)
+```
+
+2. Separando columnas
+
+```{r}
+library(tidyr)
+che=separate(che,`Current Health Expenditure`,into = c("oficial","delete"),"%")
+```
+
+3.Eliminando columnas que no necesitamos
+
+```{r}
+che$delete=NULL
+```
+
+4. Cambiando nombres
+
+```{r}
+names(che)=c("Pais","CHE")
+```
+
+
+5.Ver tabla
+
+```{r}
+str(che)
+```
+
+6. Cambiar chr a numérico
+
+```{r}
+che$CHE=as.numeric(che$CHE)
+```
+
+7. Volvemos a visualizar la tabla
+
+```{r}
+str(che)
+```
+
+
+8.Viendo los NA's
+
+```{r}
+table(che$CHE,useNA = "always")
+```
+
+
+9. Traemos la base de Excel para que con el Merge quitemos los países innecesarios
+
+```{r}
+library(rio)
+```
+
+```{r}
+lkXLSX = "https://github.com/Mayrav579/Covid19---Trabajo/raw/master/Pa%C3%ADses%20Am%C3%A9rica%20y%20Europa.xlsx"
+Paisesoficial=import(lkXLSX)
+```
+
+10. Hacemos el Merge
+
+```{r}
+HealthExpenditure=merge(che,Paisesoficial,by.x='Pais', by.y='Pais')
+```
